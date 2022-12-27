@@ -1,6 +1,8 @@
 import std/[macros, genasts, sequtils, strutils]
 import jsony
 
+include common
+
 
 macro client*(_: untyped): untyped = discard
 macro server*(body: untyped): untyped = body
@@ -10,6 +12,8 @@ template makeRpcServerHandler*(body: untyped): untyped =
   
   macro rpc*(requestUrl {.inject.}: static string, procedure: untyped): untyped =
     procedure.expectKind({nnkProcDef, nnkFuncDef})
+
+    registerRpcUrl requestUrl
 
     let requestBody = genSym(nskParam, "requestBody")
 

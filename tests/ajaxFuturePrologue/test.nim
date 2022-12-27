@@ -4,6 +4,7 @@ makeRpcConnection(
   client = $/ajaxFutureRpc,
   server = $/prologueRpc
 )
+setRpcAnnonymousUrl "/a"
 
 client:
   import std/asyncjs
@@ -19,7 +20,7 @@ server:
 
 
 server:
-  func foo(a: int): int {.rpc("/foo").} = 3*a - 1
+  func foo(a: int): int {.rpca.} = 3*a - 1
 
 
 client:

@@ -1,11 +1,11 @@
 import std/[macros, genasts, sequtils, strutils]
 import jsony
 
+include common
 
-# keep client
+
 template client*(body: untyped): untyped = body
 
-# on server just keep ajax procs for generating caller
 macro server*(body: untyped): untyped =
   result = newStmtList()
   for elem in
@@ -16,15 +16,18 @@ macro server*(body: untyped): untyped =
   :
     if elem.kind == nnkProcDef or elem.kind == nnkFuncDef:
       for p in elem.pragma:
-        if p.kind == nnkCall and cmpIgnoreStyle(p[0].strVal, "rpc") == 0:
-          result.add(elem)
-          break
+        if p.kind in {nnkCall, nnkCommand} and cmpIgnoreStyle(p[0].strVal, "rpc" ) == 0 or
+           p.kind == nnkIdent              and cmpIgnoreStyle(p.strVal,    "rpca") == 0:
+              result.add(elem)
+              break
 
 
 template makeRpcClientReturn*(returnType, body: untyped): untyped =
 
   macro rpc*(requestUrl {.inject.}: static string, procedure: untyped): untyped =
     procedure.expectKind({nnkProcDef, nnkFuncDef})
+
+    registerRpcUrl requestUrl
 
     var paramTuple = newNimNode(nnkTupleConstr)
     for p in procedure.params[1 .. ^1]:
@@ -55,6 +58,8 @@ template makeRpcClientCb*(body: untyped): untyped =
 
   macro rpc*(requestUrl {.inject.}: static string, procedure: untyped): untyped =
     procedure.expectKind({nnkProcDef, nnkFuncDef})
+
+    registerRpcUrl requestUrl
 
     var paramTuple = newNimNode(nnkTupleConstr)
     for p in procedure.params[1 .. ^1]:
