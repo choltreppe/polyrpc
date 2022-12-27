@@ -2,7 +2,7 @@ include polyrpc/client
 import std/[dom, asyncjs]
 import ajax
 
-makeRpcClientReturn Future[T]:
+makeRpcClientReturn( when T is Future: T else: Future[T] ):
   return newPromise[T](proc(resolve: proc(response: T)) =
     var xhr = new_xmlhttp_request()
     if xhr.is_nil: return
