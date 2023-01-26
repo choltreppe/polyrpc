@@ -43,7 +43,7 @@ template makeRpcClientReturn*(returnType, body: untyped): untyped =
     params[0] = genAst(T): returnType
 
     nnkProcDef.newTree(
-        procedure.name,
+        procedure[0],
         newEmptyNode(), newEmptyNode(),
         params,
         newEmptyNode(), newEmptyNode(),
@@ -86,7 +86,7 @@ template makeRpcClientCb*(body: untyped): untyped =
     )
 
     nnkProcDef.newTree(
-        procedure.name,
+        procedure[0],
         newEmptyNode(), newEmptyNode(),
         params,
         newEmptyNode(), newEmptyNode(),
