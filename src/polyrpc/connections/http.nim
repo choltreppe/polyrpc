@@ -6,7 +6,7 @@ macro makeRpcConnection*(client, server: untyped): untyped =
     let client =
       if client.kind == nnkPrefix and client[0].strVal == "$/":
         genAst(client = client[1]):
-          polyrpc/connections/web/clients/client
+          polyrpc/connections/http/clients/client
       else: client
 
     genAst(client):
@@ -16,7 +16,7 @@ macro makeRpcConnection*(client, server: untyped): untyped =
     let server =
       if server.kind == nnkPrefix and server[0].strVal == "$/":
         genAst(server = server[1]):
-          polyrpc/connections/web/servers/server
+          polyrpc/connections/http/servers/server
       else: server
 
     genAst(server):

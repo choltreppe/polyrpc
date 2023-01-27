@@ -1,4 +1,4 @@
-import polyrpc/connections/web
+import polyrpc/connections/http
 
 makeRpcConnection(
   client = $/karaxRpc,
