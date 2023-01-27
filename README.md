@@ -9,29 +9,29 @@ have a lookn at `tests/` to get a general idea of the system.
 To establish a connection you can use the predefined ones.<br>
 For example to connect karax client with prologue server:
 ```nim
-import polyrpc/connections/web
+import polyrpc/connections/http
 
 makeRpcConnection(
   client = $/karaxRpc,
   server = $/prologueRpc
 )
 ```
-The `polyrpc/connections/web` provides the `makeRpcConnection` macro, to generate a web connection. <br>
+The `polyrpc/connections/http` provides the `makeRpcConnection` macro, to generate a http connection. <br>
 `client` is the clients rpc connections module, and `server` the server one.<br>
 for convinence `$/` can be used as a shortcut for predefined ones.<br>
 So this is the same without `$/`:
 ```nim
 makeRpcConnection(
-  client = polyrpc/connections/web/clients/karaxRpc,
-  server = polyrpc/connections/web/servers/prologueRpc
+  client = polyrpc/connections/http/clients/karaxRpc,
+  server = polyrpc/connections/http/servers/prologueRpc
 )
 ```
 And that expands to:
 ```nim
 when defined(js):
-  import polyrpc/connections/web/clients/karaxRpc
+  import polyrpc/connections/http/clients/karaxRpc
 else:
-  import polyrpc/connections/web/servers/prologueRpc
+  import polyrpc/connections/http/servers/prologueRpc
 ```
 
 ## using the connection
