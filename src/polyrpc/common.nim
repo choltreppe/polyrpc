@@ -1,4 +1,7 @@
-import std/[macros, genasts, sets]
+import std/[macros, genasts, sequtils, strutils, sets, base64]
+import unibs
+
+export unibs, base64
 
 
 var

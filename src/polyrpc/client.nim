@@ -1,6 +1,3 @@
-import std/[macros, genasts, sequtils, strutils]
-import jsony
-
 include common
 
 
@@ -35,7 +32,7 @@ template makeRpcClientReturn*(returnType, body: untyped): untyped =
         paramTuple.add(p_ident)
 
     let
-      requestBody {.inject.} = genAst(paramTuple): toJson(paramTuple)
+      requestBody {.inject.} = genAst(paramTuple): paramTuple.serialize.encode
       resultVal   {.inject.} = genSym(nskFunc, "resultVal")
 
     var params = procedure.params
@@ -49,7 +46,7 @@ template makeRpcClientReturn*(returnType, body: untyped): untyped =
         newEmptyNode(), newEmptyNode(),
         genAst(requestUrl, requestBody, resultVal, T) do:
           func resultVal(response: string): T {.inject.} =
-            fromJson(response, T)
+            response.decode.deserialize(T)
           body
       )
 
@@ -67,7 +64,7 @@ template makeRpcClientCb*(body: untyped): untyped =
         paramTuple.add(p_ident)
 
     let
-      requestBody {.inject.} = genAst(paramTuple): toJson(paramTuple)
+      requestBody {.inject.} = genAst(paramTuple): paramTuple.serialize.encode
       cbProc                 = genSym(nskParam, "cb")
       callback    {.inject.} = genSym(nskTemplate, "callback")
 
@@ -92,6 +89,6 @@ template makeRpcClientCb*(body: untyped): untyped =
         newEmptyNode(), newEmptyNode(),
         genAst(requestUrl, requestBody, resultType, cbProc, callback) do:
           template callback(response: string) {.inject.} =
-            cbProc(fromJson(response, resultType))
+            cbProc(response.decode.deserialize(resultType))
           body
       )

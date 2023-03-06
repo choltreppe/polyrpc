@@ -1,6 +1,3 @@
-import std/[macros, genasts, sequtils, strutils]
-import jsony
-
 include common
 
 
@@ -38,14 +35,14 @@ template makeRpcServerHandler*(body: untyped): untyped =
           macros.add(paramAssign,
             newEmptyNode(),
             genAst(requestBody, paramsType) do:
-              fromJson(requestBody, paramsType)
+              requestBody.decode.deserialize(paramsType)
           )
         )
 
     let addHandler = genAst(requestUrl, paramAssign, procCall, requestBody):
       template callProc(requestBody: string): untyped {.inject.} =
         paramAssign
-        toJson(procCall)
+        procCall.serialize.encode
       body
 
     macros.newStmtList(procedure, addHandler)

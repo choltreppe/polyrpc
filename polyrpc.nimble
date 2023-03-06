@@ -10,7 +10,7 @@ srcDir        = "src"
 # Dependencies
 
 requires "nim >= 1.6.10"
-requires "jsony >= 1.1.3"
+requires "unibs >= 0.1.1"
 
 
 task testKaraxPrologue, "test connection between karax and prologue":

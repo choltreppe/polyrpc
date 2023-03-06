@@ -21,12 +21,12 @@ server:
 
 server:
 
-    proc foo(x: int, y: bool): float {.rpc("/foo1").} =
-      if y: float(x) * 1.5
-      else: 0.0
+  proc foo(x: int, y: bool): float {.rpc("/foo1").} =
+    if y: float(x) * 1.5
+    else: 0.0
 
-    proc foo(x: float): bool {.rpcA.} =
-      x > 0
+  proc foo(x: float): bool {.rpcA.} =
+    x > 0
 
 client:
 

@@ -1,2 +1,7 @@
-tests/*/test
-tests/*/test.js
+*
+!*/
+!*.*
+
+*.exe
+nimcache
+*.js
