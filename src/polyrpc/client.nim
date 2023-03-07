@@ -32,23 +32,36 @@ template makeRpcClientReturn*(returnType, body: untyped): untyped =
         paramTuple.add(p_ident)
 
     let
-      requestBody {.inject.} = genAst(paramTuple): paramTuple.serialize.encode
+      requestBody {.inject.} = serializeCall(paramTuple)
       resultVal   {.inject.} = genSym(nskFunc, "resultVal")
 
     var params = procedure.params
     let T {.inject.} = params[0]
     params[0] = genAst(T): returnType
 
+    let
+      response  = genSym(nskParam, "response")
+      resultVal = genSym(nskProc,  "resultVal")
+
     nnkProcDef.newTree(
-        procedure[0],
-        newEmptyNode(), newEmptyNode(),
-        params,
-        newEmptyNode(), newEmptyNode(),
-        genAst(requestUrl, requestBody, resultVal, T) do:
-          func resultVal(response: string): T {.inject.} =
-            response.decode.deserialize(T)
-          body
+      procedure[0],
+      newEmptyNode(), newEmptyNode(),
+      params,
+      newEmptyNode(), newEmptyNode(),
+      newStmtList(
+        nnkFuncDef.newTree(
+          resultVal,
+          newEmptyNode(), newEmptyNode(),
+          nnkFormalParams.newTree(
+            T,
+            nnkIdentDefs.newTree(response, ident"string", newEmptyNode())
+          ),
+          newEmptyNode(), newEmptyNode(),
+          deserializeCall(response, T)
+        ),
+        genAst(requestUrl, requestBody, resultVal, T) do: body
       )
+    )
 
 
 template makeRpcClientCb*(body: untyped): untyped =
@@ -64,7 +77,7 @@ template makeRpcClientCb*(body: untyped): untyped =
         paramTuple.add(p_ident)
 
     let
-      requestBody {.inject.} = genAst(paramTuple): paramTuple.serialize.encode
+      requestBody {.inject.} = serializeCall(paramTuple)
       cbProc                 = genSym(nskParam, "cb")
       callback    {.inject.} = genSym(nskTemplate, "callback")
 
@@ -82,13 +95,27 @@ template makeRpcClientCb*(body: untyped): untyped =
       newEmptyNode()
     )
 
-    nnkProcDef.newTree(
-        procedure[0],
-        newEmptyNode(), newEmptyNode(),
-        params,
-        newEmptyNode(), newEmptyNode(),
-        genAst(requestUrl, requestBody, resultType, cbProc, callback) do:
-          template callback(response: string) {.inject.} =
-            cbProc(response.decode.deserialize(resultType))
-          body
+    let
+      response = genSym(nskParam, "response")
+      callback = genSym(nskProc,  "callback")
+
+    result = nnkProcDef.newTree(
+      procedure[0],
+      newEmptyNode(), newEmptyNode(),
+      params,
+      newEmptyNode(), newEmptyNode(),
+      newStmtList(
+        nnkTemplateDef.newTree(
+          callback,
+          newEmptyNode(), newEmptyNode(),
+          nnkFormalParams.newTree(
+            newEmptyNode(),
+            nnkIdentDefs.newTree(response, ident"string", newEmptyNode())
+          ),
+          newEmptyNode(), newEmptyNode(),
+          newCall(cbProc, deserializeCall(response, resultType))
+        ),
+        genAst(requestUrl, requestBody, callback) do: body
       )
+    )
+    debugEcho result.repr

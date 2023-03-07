@@ -1,3 +1,5 @@
+import std/macros
+import jsony
 import polyrpc/connections/http
 
 makeRpcConnection(
@@ -5,6 +7,16 @@ makeRpcConnection(
   server = $/prologueRpc
 )
 setRpcAnnonymousUrl "/a"
+
+static:
+  serializeCall =
+    proc(val: NimNode): NimNode =
+      quote do: `val`.toJson
+
+  deserializeCall =
+    proc(str, T: NimNode): NimNode =
+      quote do: `str`.fromJson(`T`)
+
 
 client:
   import std/asyncjs

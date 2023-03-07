@@ -1,4 +1,5 @@
 include polyrpc/client
+import karax/kbase
 import karax/kajax except toJson, fromJson
 
 makeRpcClientCb:

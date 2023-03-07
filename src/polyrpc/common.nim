@@ -1,7 +1,29 @@
 import std/[macros, genasts, sequtils, strutils, sets, base64]
 import unibs
 
-export unibs, base64
+export base64, unibs
+
+
+var
+  serializeCall* {.compiletime.} =
+    proc(val: NimNode): NimNode =
+      quote do: base64.encode(unibs.serialize(`val`))
+
+  deserializeCall* {.compiletime.} =
+    proc(str, T: NimNode): NimNode =
+      quote do: unibs.deserialize(base64.decode(`str`), `T`)
+
+#[template setSerializeCall*(body: untyped) =
+  static:
+    serializeCall =
+      proc(val {.inject.}: NimNode): NimNode =
+        genAst(val): body
+
+template setDeserializeCall*(body: untyped) =
+  static:
+    serializeCall =
+      proc(str {.inject.}, T {.inject.}: NimNode): NimNode =
+        genAst(str, T): body]#
 
 
 var

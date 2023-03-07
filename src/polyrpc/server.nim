@@ -34,15 +34,14 @@ template makeRpcServerHandler*(body: untyped): untyped =
         macros.newTree(nnkLetSection,
           macros.add(paramAssign,
             newEmptyNode(),
-            genAst(requestBody, paramsType) do:
-              requestBody.decode.deserialize(paramsType)
+            deserializeCall(requestBody, paramsType)
           )
         )
 
-    let addHandler = genAst(requestUrl, paramAssign, procCall, requestBody):
+    let addHandler = genAst(requestUrl, paramAssign, serialized = serializeCall(procCall), requestBody):
       template callProc(requestBody: string): untyped {.inject.} =
         paramAssign
-        procCall.serialize.encode
+        serialized
       body
 
     macros.newStmtList(procedure, addHandler)

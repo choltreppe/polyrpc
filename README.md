@@ -134,5 +134,21 @@ The second parameter defines the proc body. There are following things defined i
 `requestBody`: the body string that needs to be send<br>
 `resultVal`: proc to turn result string into actual type
 
+## change serializing / deserializing procs
+
+for example to use `jsony`:
+```nim
+static:
+  serializeCall =
+    proc(val: NimNode): NimNode =
+      quote do: `val`.toJson
+
+  deserializeCall =
+    proc(str, T: NimNode): NimNode =
+      quote do: `str`.fromJson(`T`)
+```
+
+This will probably be simplyfied with macros in the future.
+
 # Contribution
 Issues and PRs welcome
