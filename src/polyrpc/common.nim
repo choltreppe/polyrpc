@@ -1,17 +1,17 @@
-import std/[macros, genasts, sequtils, strutils, sets, base64]
-import unibs
+import std/[macros, genasts, sequtils, strutils, sets]
+import jsony
 
-export base64, unibs
+export jsony
 
 
 var
   serializeCall* {.compiletime.} =
     proc(val: NimNode): NimNode =
-      quote do: base64.encode(unibs.serialize(`val`))
+      quote do: jsony.toJson(`val`)
 
   deserializeCall* {.compiletime.} =
     proc(str, T: NimNode): NimNode =
-      quote do: unibs.deserialize(base64.decode(`str`), `T`)
+      quote do: jsony.fromJson(`str`, `T`)
 
 #[template setSerializeCall*(body: untyped) =
   static:

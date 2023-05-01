@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.0"
+version       = "0.2.0"
 author        = "Joel Lienhard"
 description   = "A lib for generating rpc interface for any client server pair"
 license       = "MIT"
@@ -10,7 +10,7 @@ srcDir        = "src"
 # Dependencies
 
 requires "nim >= 1.6.10"
-requires "unibs >= 0.1.1"
+requires "jsony >= 1.1.5"
 
 
 task testKaraxPrologue, "test connection between karax and prologue":
