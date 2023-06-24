@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.2.0"
+version       = "0.2.1"
 author        = "Joel Lienhard"
 description   = "A lib for generating rpc interface for any client server pair"
 license       = "MIT"
@@ -25,5 +25,13 @@ task testAjaxFuture, "test ajax Future":
 
   withDir "tests/ajaxFuturePrologue":
     exec "nim c test.nim"
+    exec "nim js test.nim"
+    exec "./test"
+
+
+task testMummy, "test Mummy":
+
+  withDir "tests/ajaxFutureMummy":
+    exec "nim c --threads:on test.nim"
     exec "nim js test.nim"
     exec "./test"
