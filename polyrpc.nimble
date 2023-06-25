@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.2.1"
+version       = "0.2.2"
 author        = "Joel Lienhard"
 description   = "A lib for generating rpc interface for any client server pair"
 license       = "MIT"
